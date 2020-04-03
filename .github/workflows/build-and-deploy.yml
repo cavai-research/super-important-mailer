@@ -26,8 +26,8 @@ jobs:
       env:
         REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
       with:
-        host: ec2-18-194-208-71.eu-central-1.compute.amazonaws.com
-        username: deployer
+        host: ec2-3-121-184-144.eu-central-1.compute.amazonaws.com
+        username: centos
         command_timeout: 5m
         key: ${{ secrets.SERVER_ACCESS_KEY }}
         envs: GITHUB_REF,REGISTRY_ACCESS_TOKEN,MAILGUN_DOMAIN,MAILGUN_API_KEY,BASE_DOMAIN,MAIL_TO,MAIL_FROM

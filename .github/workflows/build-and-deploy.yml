@@ -25,6 +25,12 @@ jobs:
       uses: appleboy/ssh-action@master
       env:
         REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
+        MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}
+        MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}
+        MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+        BASE_DOMAIN: ${{ secrets.BASE_DOMAIN }}
+        MAIL_TO: ${{ secrets.MAIL_TO }}
+        MAIL_FROM: ${{ secrets.MAIL_FROM }}
       with:
         host: ec2-3-121-184-144.eu-central-1.compute.amazonaws.com
         username: centos

@@ -36,11 +36,10 @@ jobs:
           docker pull docker.pkg.github.com/cavai-research/super-important-mailer/mailer:$(echo $GITHUB_REF | cut -d '/' -f3)
           docker stop super-important-mailer; docker rm super-important-mailer;
           docker run -d --name super-important-mailer --restart always \
-            -e NODE_ENV=production \
             -e MAILGUN_DOMAIN=${MAILGUN_DOMAIN} \
             -e MAILGUN_API_KEY=${MAILGUN_API_KEY} \
-            -e BASE_DOMAIN=${https://raw.githubusercontent.com/cavai-research/super-important-mailer/master/images} \
             -e MAIL_TO=${MAIL_TO} \
             -e MAIL_FROM=${MAIL_FROM} \
             -e IMMEDIATE=true \
+            -v ${PWD}/sent.json:/home/node/app/sent.json \
             docker.pkg.github.com/cavai-research/super-important-mailer/mailer:$(echo $GITHUB_REF | cut -d '/' -f3)

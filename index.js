@@ -62,3 +62,7 @@ function queue() {
 }
 
 queue();
+
+process.on('SIGINT', () => {
+  process.exit()
+})

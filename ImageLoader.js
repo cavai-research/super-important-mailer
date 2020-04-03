@@ -10,8 +10,18 @@ class ImageLoader {
   static getRandomImage() {
     // Read all files in images folder
     let images = fs.readdirSync(path.resolve(__dirname, 'images'))
+    let jsonObj = ImageLoader.readJson()
+
+    let notSentImages = images.filter((image) => !jsonObj[image])
+
+    // Check if out of images
+    if (notSentImages.length === 0) {
+      console.error('Out of images')
+      process.exit();
+    }
+
     // Return random from all images in folder
-    return images[Math.floor(Math.random() * images.length)]
+    return notSentImages[Math.floor(Math.random() * notSentImages.length)]
   }
 
   /**
@@ -21,13 +31,8 @@ class ImageLoader {
    * @returns {Boolean}
    */
   static isDuplicate(image) {
-    let JsonObj = fs.readFileSync(path.resolve(__dirname, 'sent.json'), 'utf-8');
-    if (!JsonObj) {
-      return false
-    }
-    JsonObj = JSON.parse(JsonObj)
-
-    if (JsonObj[image] === true) {
+    let jsonObj = ImageLoader.readJson()
+    if (jsonObj[image] === true) {
       return true
     }
 
@@ -55,13 +60,19 @@ class ImageLoader {
    * @param {string} image Image name
    */
   static markSent(image) {
-    let JsonObj = fs.readFileSync(path.resolve(__dirname, 'sent.json'), 'utf-8');
-    if (!JsonObj) {
-      return false
-    }
-    JsonObj = JSON.parse(JsonObj)
-    JsonObj[image] = true
-    fs.writeFileSync(path.resolve(__dirname, 'sent.json'), JSON.stringify(JsonObj))
+    let jsonObj = ImageLoader.readJson()
+    jsonObj[image] = true
+    fs.writeFileSync(path.resolve(__dirname, 'sent.json'), JSON.stringify(jsonObj))
+  }
+
+  /**
+   * Reads JSON file to object
+   *
+   * @returns {Object} Json file content
+   */
+  static readJson() {
+    let jsonObj = fs.readFileSync(path.resolve(__dirname, 'sent.json'), 'utf-8');
+    return JSON.parse(jsonObj)
   }
 }
 

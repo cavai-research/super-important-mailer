@@ -1,0 +1,22 @@
+{
+  "name": "super-important-mailer",
+  "version": "1.0.0",
+  "description": "Super important mail bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:cavai-research/super-important-mailer.git"
+  },
+  "author": "cavai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cavai-studio/super-important-mailer/issues"
+  },
+  "homepage": "https://github.com/cavai-studio/super-important-mailer#readme",
+  "dependencies": {
+    "axios": "^0.19.2"
+  }
+}

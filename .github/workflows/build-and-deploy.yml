@@ -45,5 +45,5 @@ jobs:
             -e MAIL_TO=${MAIL_TO} \
             -e MAIL_FROM=${MAIL_FROM} \
             -e IMMEDIATE=true \
-            -v ${PWD}/sent.json:/home/node/app/sent.json \
+            -v ${PWD}/sent.json:/home/node/sent.json \
             docker.pkg.github.com/cavai-research/super-important-mailer/mailer:$(echo $GITHUB_REF | cut -d '/' -f3)

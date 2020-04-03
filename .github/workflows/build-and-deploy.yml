@@ -1,0 +1,46 @@
+name: Build and deploy
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Node ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build container
+      run: |
+          RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f3)
+          docker login docker.pkg.github.com --username mcsneaky --password ${{ secrets.REGISTRY_ACCESS_TOKEN }}
+          docker build -t docker.pkg.github.com/cavai-research/super-important-mailer/mailer:$RELEASE_TAG .
+          docker push docker.pkg.github.com/cavai-research/super-important-mailer/mailer:$RELEASE_TAG
+
+    - name: Deploy to production
+      uses: appleboy/ssh-action@master
+      env:
+        REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
+      with:
+        host: ec2-18-194-208-71.eu-central-1.compute.amazonaws.com
+        username: deployer
+        command_timeout: 5m
+        key: ${{ secrets.SERVER_ACCESS_KEY }}
+        envs: GITHUB_REF,REGISTRY_ACCESS_TOKEN,MAILGUN_DOMAIN,MAILGUN_API_KEY,BASE_DOMAIN,MAIL_TO,MAIL_FROM
+        script: |
+          docker login docker.pkg.github.com --username mcsneaky --password $REGISTRY_ACCESS_TOKEN
+          docker pull docker.pkg.github.com/cavai-research/super-important-mailer/mailer:$(echo $GITHUB_REF | cut -d '/' -f3)
+          docker stop super-important-mailer; docker rm super-important-mailer;
+          docker run -d --name super-important-mailer --restart always \
+            -e NODE_ENV=production \
+            -e MAILGUN_DOMAIN=${MAILGUN_DOMAIN} \
+            -e MAILGUN_API_KEY=${MAILGUN_API_KEY} \
+            -e BASE_DOMAIN=${https://raw.githubusercontent.com/cavai-research/super-important-mailer/master/images} \
+            -e MAIL_TO=${MAIL_TO} \
+            -e MAIL_FROM=${MAIL_FROM} \
+            -e IMMEDIATE=true \
+            docker.pkg.github.com/cavai-research/super-important-mailer/mailer:$(echo $GITHUB_REF | cut -d '/' -f3)
